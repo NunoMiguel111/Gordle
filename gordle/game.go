@@ -1,13 +1,22 @@
 package gordle
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+)
 
 // Game holds all the information we need to play a game
-type Game struct{}
+type Game struct {
+	reader *bufio.Reader
+}
 
 // New returns a Game, which can be used to Play!
-func New() *Game {
-	g := &Game{}
+func New(playerInput io.Reader) *Game {
+	g := &Game{
+		reader: bufio.NewReader(playerInput),
+	}
 
 	return g
 }
@@ -16,5 +25,32 @@ func New() *Game {
 func (g *Game) Play() {
 	fmt.Println("Welcome to Gordle!")
 
-	fmt.Printf("Enter a guess:\n")
+	// ask for a valid word
+	guess := g.ask()
+
+	fmt.Printf("Your guess is: %s\n", string(guess))
+}
+
+const wordLength = 5
+
+// ask reads input untila a valid suggestion is made (and returned)
+func (g *Game) ask() []rune {
+	fmt.Printf("Enter a %d-character guess: \n", wordLength)
+
+	for {
+		playerInput, _, err := g.reader.ReadLine()
+		if err != nil {
+			_, _ = fmt.Fprintf(os.Stderr, "Gordle failed to read your guess: %s\n", err.Error())
+
+		}
+
+		guess := []rune(string(playerInput))
+
+		// TODO Verify the suggestion has a valid length
+		if len(guess) != wordLength {
+			_, _ = fmt.Fprintf(os.Stderr, "Your attempt is invalid with Gordle's solution. Expected %d characters, got %d", wordLength, len(guess))
+		} else {
+			return guess
+		}
+	}
 }

@@ -1,8 +1,13 @@
 package main
 
-import "gordle/gordle"
+import (
+	"bufio"
+	"gordle/gordle"
+	"os"
+)
 
 func main() {
-	g := gordle.New()
+	r := bufio.NewReader(os.Stdin)
+	g := gordle.New(r)
 	g.Play()
 }
