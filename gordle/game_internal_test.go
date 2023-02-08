@@ -57,9 +57,17 @@ func TestGameValidateGuess(t *testing.T) {
 			expected: errInvalidWordLength,
 		},
 		"too short": {
-			word: []rune("RED"),
+			word:     []rune("RED"),
 			expected: errInvalidWordLength,
-		}
+		},
+		"empty": {
+			word:     []rune(""),
+			expected: errInvalidWordLength,
+		},
+		"is nil": {
+			word:     []rune(nil),
+			expected: errInvalidWordLength,
+		},
 	}
 
 	for name, tc := range tt {
